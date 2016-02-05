@@ -11,11 +11,12 @@ import pandas as pd
 # from sklearn import datasets, svm
 # from KaggleAux import predict as ka # see github.com/agconti/kaggleaux for more details
 
-
+# --------------------------------------------Loading Files----------------------------------------------
 # Data loaded in a dictionary
 df = pd.read_csv("train.csv") 
 # Ticket and cabin are not very important so we will drop them
-# df = df.drop(['ticket','cabin'], axis=1) 
-# # Remove NaN values
-# df = df.dropna() 
-# # print df
+df = df.drop(['Ticket','Cabin'], axis=1) 
+# Remove NaN values
+df = df.dropna() 
+# print df
+# --------------------------------------------Visualizing the Data----------------------------------------
