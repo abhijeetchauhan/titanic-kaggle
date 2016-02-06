@@ -4,21 +4,24 @@ import matplotlib.pyplot as plt
 import numpy as np
 # Pandas is used to deal with csv file
 import pandas as pd
-import statsmodels.api as sm
-from statsmodels.nonparametric.kde import KDEUnivariate
-from statsmodels.nonparametric import smoothers_lowess
+# import statsmodels.api as sm
+# from statsmodels.nonparametric.kde import KDEUnivariate
+# from statsmodels.nonparametric import smoothers_lowess
 from pandas import Series, DataFrame
-from patsy import dmatrices
-from sklearn import datasets, svm
+from patsy import dmatrices,dmatrix
+from sklearn import datasets, svm,cross_validation
+from sklearn.metrics import accuracy_score
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_selection import SelectPercentile, f_classif
 # from KaggleAux import predict as ka # see github.com/agconti/kaggleaux for more details
 
 # --------------------------------------------Loading Files----------------------------------------------
 # Data loaded in a dictionary
 df = pd.read_csv("train.csv") 
 # Ticket and cabin are not very important so we will drop them
-df = df.drop(['Ticket','Cabin'], axis=1) 
+df = df.drop(['Ticket','Cabin'], axis=1)
 # Remove NaN values
-df = df.dropna() 
+df = df.dropna()
 # print df
 # --------------------------------------------Visualizing the Data----------------------------------------  
 # # plot a bar graph of those who Survived Vs Those who did not
@@ -81,3 +84,45 @@ df = df.dropna()
 # plt.xticks([.5,1.5], ["Died","Survived"],rotation=0)
 # plt.legend(loc='best')
 # plt.show()
+# create a regression friendly dataframe using patsy's dmatrices function
+# y,x = dmatrices(formula, data=df, return_type='dataframe')
+# print y
+# print x
+# ---------------------------------------Applying Logistic Regression---------------------------------------
+
+# # import the machine learning library that holds the randomforest
+# import sklearn.ensemble as ske
+# Create an acceptable formula for our machine learning algorithms
+formula_ml = 'Survived ~ C(Pclass) + C(Sex)'
+
+# # Create the random forest model and fit the model to our training data
+y, x = dmatrices(formula_ml, data=df, return_type='dataframe')
+# # RandomForestClassifier expects a 1 demensional NumPy array, so we convert
+y = np.asarray(y).ravel()
+# #instantiate and fit our model
+# results_rf = ske.RandomForestClassifier(n_estimators=100).fit(x, y)
+
+# # Score the results
+# score = results_rf.score(x, y)
+# print "Mean accuracy of Random Forest Predictions on the data was: {0}".format(score)
+from sklearn.svm import SVC
+clf = SVC(kernel='rbf')
+clf.fit(x, y) 
+print "Sucess"
+
+test = pd.read_csv("test.csv") 
+test = test.drop(['Ticket','Cabin'], axis=1)
+# test = test.dropna()
+formula_ml = 'C(Pclass) + C(Sex)'
+# print test
+x = dmatrix(formula_ml, data=test, return_type='dataframe')
+# print x
+pre=clf.predict(x)
+pre = DataFrame(pre,columns=['Survived'])
+pre.to_csv("output.csv")
+# print pre
+# print pre[0]
+# print pre
+# print len(pre)
+# from sklearn.metrics import accuracy_score
+# print(accuracy_score(y, pre))
