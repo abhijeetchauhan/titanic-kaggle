@@ -105,8 +105,8 @@ y = np.asarray(y).ravel()
 # # Score the results
 # score = results_rf.score(x, y)
 # print "Mean accuracy of Random Forest Predictions on the data was: {0}".format(score)
-from sklearn.svm import SVC
-clf = SVC(kernel='rbf')
+from sklearn.ensemble import RandomForestClassifier
+clf = RandomForestClassifier(n_estimators=30)
 clf.fit(x, y) 
 print "Sucess"
 
@@ -120,6 +120,8 @@ x = dmatrix(formula_ml, data=test, return_type='dataframe')
 pre=clf.predict(x)
 pre = DataFrame(pre,columns=['Survived'])
 pre.to_csv("output.csv")
+# from sklearn.metrics import accuracy_score
+# print accuracy_score(y,pre)
 # print pre
 # print pre[0]
 # print pre
